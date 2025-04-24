@@ -1,0 +1,3 @@
+Setting image server timeout to 180 minutes
+Starting ngrok for port 7779...
+NGROK_STATUS=FAILED|ERROR=Process not running after startup attempt

@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "directory": "/home/jason/Videos/screenRecordings/screen_recording_2025_03_17_at_9_01_01_pm",
+  "timestamp": "2025-04-14 06:38:58",
+  "message": "Generated URLs for 19 images",
+  "count": 19,
+  "image_urls": [
+    "http://localhost:7779/images/frame_000001.jpg",
+    "http://localhost:7779/images/frame_000002.jpg",
+    "http://localhost:7779/images/frame_000003.jpg",
+    "http://localhost:7779/images/frame_000004.jpg",
+    "http://localhost:7779/images/frame_000005.jpg",
+    "http://localhost:7779/images/frame_000006.jpg",
+    "http://localhost:7779/images/frame_000007.jpg",
+    "http://localhost:7779/images/frame_000008.jpg",
+    "http://localhost:7779/images/frame_000009.jpg",
+    "http://localhost:7779/images/frame_000010.jpg",
+    "http://localhost:7779/images/frame_000011.jpg",
+    "http://localhost:7779/images/frame_000012.jpg",
+    "http://localhost:7779/images/frame_000013.jpg",
+    "http://localhost:7779/images/frame_000014.jpg",
+    "http://localhost:7779/images/frame_000015.jpg",
+    "http://localhost:7779/images/frame_000016.jpg",
+    "http://localhost:7779/images/frame_000017.jpg",
+    "http://localhost:7779/images/frame_000018.jpg",
+    "http://localhost:7779/images/frame_000019.jpg"
+  ],
+  "timeout_minutes": 60,
+  "auto_unload_at": "2025-04-14 07:38:58",
+  "time_remaining": "59m 59s"
+}

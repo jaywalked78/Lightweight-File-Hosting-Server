@@ -1,0 +1,72 @@
+Starting image loading process at Thu Apr 10 03:47:16 AM CDT 2025
+[03:47:16] Working directory: /home/jason/Documents/LightweightImageServer
+[03:47:16] No active virtual environment detected.
+[03:47:16] Using existing virtual environment: tinyHosterVenv
+[03:47:16] Activating virtual environment...
+[03:47:16] Virtual environment activated: /home/jason/Documents/LightweightImageServer/tinyHosterVenv
+[03:47:16] Installing required packages...
+Requirement already satisfied: pip in ./tinyHosterVenv/lib/python3.10/site-packages (25.0.1)
+Requirement already satisfied: requests in ./tinyHosterVenv/lib/python3.10/site-packages (2.32.3)
+Requirement already satisfied: Pillow in ./tinyHosterVenv/lib/python3.10/site-packages (11.1.0)
+Requirement already satisfied: fastapi in ./tinyHosterVenv/lib/python3.10/site-packages (0.115.12)
+Requirement already satisfied: uvicorn in ./tinyHosterVenv/lib/python3.10/site-packages (0.34.0)
+Requirement already satisfied: python-dotenv in ./tinyHosterVenv/lib/python3.10/site-packages (1.1.0)
+Requirement already satisfied: charset-normalizer<4,>=2 in ./tinyHosterVenv/lib/python3.10/site-packages (from requests) (3.4.1)
+Requirement already satisfied: idna<4,>=2.5 in ./tinyHosterVenv/lib/python3.10/site-packages (from requests) (3.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./tinyHosterVenv/lib/python3.10/site-packages (from requests) (2.3.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./tinyHosterVenv/lib/python3.10/site-packages (from requests) (2025.1.31)
+Requirement already satisfied: starlette<0.47.0,>=0.40.0 in ./tinyHosterVenv/lib/python3.10/site-packages (from fastapi) (0.46.1)
+Requirement already satisfied: pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 in ./tinyHosterVenv/lib/python3.10/site-packages (from fastapi) (2.11.3)
+Requirement already satisfied: typing-extensions>=4.8.0 in ./tinyHosterVenv/lib/python3.10/site-packages (from fastapi) (4.13.1)
+Requirement already satisfied: click>=7.0 in ./tinyHosterVenv/lib/python3.10/site-packages (from uvicorn) (8.1.8)
+Requirement already satisfied: h11>=0.8 in ./tinyHosterVenv/lib/python3.10/site-packages (from uvicorn) (0.14.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./tinyHosterVenv/lib/python3.10/site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (0.7.0)
+Requirement already satisfied: pydantic-core==2.33.1 in ./tinyHosterVenv/lib/python3.10/site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (2.33.1)
+Requirement already satisfied: typing-inspection>=0.4.0 in ./tinyHosterVenv/lib/python3.10/site-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (0.4.0)
+Requirement already satisfied: anyio<5,>=3.6.2 in ./tinyHosterVenv/lib/python3.10/site-packages (from starlette<0.47.0,>=0.40.0->fastapi) (4.9.0)
+Requirement already satisfied: exceptiongroup>=1.0.2 in ./tinyHosterVenv/lib/python3.10/site-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi) (1.2.2)
+Requirement already satisfied: sniffio>=1.1 in ./tinyHosterVenv/lib/python3.10/site-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi) (1.3.1)
+PIL installed successfully.
+[03:47:17] Running load_folder.py script with arguments: --dir=screen_recording_2025_02_20_at_12_14_43_pm
+[03:47:17] Starting log tail in background. Press Ctrl+C to stop viewing the log (script will continue).
+Starting image server on http://0.0.0.0:7779 (persistent mode)
+Directories loaded in this server will remain loaded after shutdown
+Press Ctrl+C to stop the server
+Waiting for server to start...
+Traceback (most recent call last):
+  File "/home/jason/Documents/LightweightImageServer/run.py", line 2, in <module>
+    from app.main import start
+  File "/home/jason/Documents/LightweightImageServer/app/main.py", line 16, in <module>
+    from load_folder import is_server_running, start_server, load_directory, get_server_info, generate_json
+  File "/home/jason/Documents/LightweightImageServer/load_folder.py", line 4, in <module>
+    import requests
+ModuleNotFoundError: No module named 'requests'
+WARNING: Server did not appear to start within 5 seconds.
+Check for errors in the output above.
+
+=== Image Server URL Configuration ===
+Server URL:    http://localhost:7779
+Source dir:    screen_recording_2025_02_20_at_12_14_43_pm
+Output dir:    /home/jason/Documents/LightweightImageServer/output/json
+Timeout:       30 minutes
+Unload first:  False
+Unload after:  False
+=====================================
+
+Server not running. Attempting to start...
+Starting server with /home/jason/Documents/LightweightImageServer/persistent_run.sh...
+Waiting for server to start (attempt 1/10)...
+Waiting for server to start (attempt 2/10)...
+Waiting for server to start (attempt 3/10)...
+Waiting for server to start (attempt 4/10)...
+Waiting for server to start (attempt 5/10)...
+Waiting for server to start (attempt 6/10)...
+Waiting for server to start (attempt 7/10)...
+Waiting for server to start (attempt 8/10)...
+Waiting for server to start (attempt 9/10)...
+Waiting for server to start (attempt 10/10)...
+Failed to start server
+Couldn't start the server. Exiting.
+[03:47:28] Deactivating virtual environment...
+[03:47:28] Script completed with status: 0
+[03:47:28] Full log available at: /home/jason/Documents/LightweightImageServer/image_loader.log
