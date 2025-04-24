@@ -33,9 +33,10 @@ logs/
 *.log
 
 # Output directories - keep folder structure but ignore contents
-output/**/*
-!output/**/
-!output/**//.gitkeep
+output/*
+!output/*/
+output/*/*
+!output/*/.gitkeep
 ocr_data_*/
 payloads/
 frame_embeddings/
