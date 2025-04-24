@@ -1,18 +1,39 @@
-# Lightweight-File-Hosting-Server
+# Lightweight Image Server (formerly TinyImageHoster)
 
-A high-performance, lightweight server for hosting local files with HTTP URLs. Built with Python, this tool makes file sharing simple with fast uploads, easy access, and minimal configuration.
+A high-performance, lightweight image server optimized for hosting local images and generating accessible HTTP URLs. It plays a crucial role in machine learning workflows, particularly RAG pipelines involving multimodal data, by providing stable URLs for visual content like screen recording frames.
+
+While maintaining a small footprint, this server is optimized for stability and performance, capable of efficiently loading and serving numerous images. Integration with tools like Ngrok ([NGROK_SETUP.md](./NGROK_SETUP.md)) allows for easy generation of stable public URLs, essential when integrating with external services like n8n or AI models.
+
+## Workflow Context
+
+This Image Server is often used within a larger content ingestion pipeline, providing the necessary URLs for visual context alongside processed text. Here's a typical workflow where it fits in, orchestrated heavily by n8n:
+
+```mermaid
+flowchart TD
+    A[Video Input] --> B(n8n: Trigger Frame Processor);
+    B --> C{[Frame Processor Extractor]};
+    C --> D(n8n: AI Enrichment + OCR Refinement + Airtable Upsert);
+    D --> E(n8n: Trigger IntelliChunk);
+    E --> F{IntelliChunk + LIGHTWEIGHT IMAGE SERVER};
+    F --> G(n8n: Embedding Generation);
+    G --> H[(PostgreSQL Vector DB)];
+```
+
+In this pipeline:
+- Raw images (e.g., frames extracted by the Frame Processor) are stored locally.
+- The `Lightweight Image Server` is run (often via `persistent_run.sh`) to host these images.
+- The [IntelliChunk](https://github.com/jaywalked78/IntelliChunk) processor (or other parts of the n8n workflow) interacts with this server via its API (`/load-directory`) to ensure images are loaded and gets the corresponding `http://.../images/<image_name>` URLs.
+- These URLs are then combined with the chunked text data before embedding and storage, allowing RAG systems to retrieve both text and relevant visuals.
 
 ## Features
 
-- Serve files from any local directory with blazing-fast loading
-- Parallel processing with ThreadPoolExecutor and async I/O
-- Batch processing to optimize performance
-- Interactive progress bars for real-time loading feedback
-- Load and unload directories on demand
-- RESTful API for directory management
-- Auto-unload timeout (configurable in `.env` file)
-- Environment variable support for flexible configuration
-- Support for absolute and relative path resolution
+- **Efficient Serving:** Serve images (and potentially other files) from local directories.
+- **URL Generation:** Provides stable HTTP URLs for locally hosted files.
+- **High Performance:** Optimized loading using parallel processing (ThreadPoolExecutor) and async I/O (`load_folder_v2.py`).
+- **API Control:** RESTful API for loading/unloading directories and managing server state.
+- **Progress Tracking:** Interactive progress bars during bulk loading (`run_with_progress.sh`).
+- **Configurable:** Uses `.env` for port, host, auto-unload timeout, and base directories.
+- **Ngrok Integration:** Scripts and documentation for exposing the server publicly via Ngrok.
 
 ## Quick Start
 
@@ -22,134 +43,99 @@ git clone https://github.com/jaywalked78/Lightweight-File-Hosting-Server.git
 cd Lightweight-File-Hosting-Server
 ```
 
-2. Create a virtual environment:
+2. Create a virtual environment (optional but recommended):
 ```bash
-python3 -m venv tinyHosterVenv
+python3 -m venv venv
+source venv/bin/activate
 ```
 
 3. Copy and configure the environment variables:
 ```bash
 cp .env.example .env
-# Edit .env to set your preferences and paths
+# Edit .env: Set IMAGE_SERVER_PORT, IMAGE_SERVER_HOST, FRAME_BASE_DIR
 ```
 
-4. Load files from a directory:
+4. Start the persistent server:
 ```bash
-./run_with_progress.sh /path/to/your/files
+./persistent_run.sh
+# Server will run in the background
 ```
 
-5. Use the file URLs in your application:
-```
-http://localhost:7779/files/<file_name>
-```
+5. Load images using the API or script:
+   - **Via script (shows progress):**
+     ```bash
+     ./run_with_progress.sh /path/to/your/images
+     ```
+   - **Via API (e.g., from n8n):**
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"directory": "/path/to/your/images"}' http://localhost:7779/load-directory
+     ```
 
-6. When finished, unload the directory:
-```bash
-./unload_directory.sh
-```
+6. Access images via their generated URLs:
+   ```
+   http://localhost:7779/images/<image_name>
+   ```
+   *(Replace `localhost:7779` with your Ngrok URL if using)*
+
+7. Unload directories when no longer needed (optional, uses auto-unload or API):
+   ```bash
+   curl -X POST http://localhost:7779/unload
+   ```
 
 ## Performance
 
-The optimized file loader (`load_folder_v2.py`) offers significant performance improvements:
+The optimized image loader (`load_folder_v2.py`) offers significant performance improvements:
 
-- **Parallel Processing**: Uses ThreadPoolExecutor to load multiple files concurrently
-- **Asynchronous I/O**: Implements async processing with asyncio and aiohttp
-- **Batch Processing**: Processes files in configurable batches for better throughput
-- **Smart Header Checking**: Verifies file availability without downloading full content
-- **Real-time Progress Tracking**: Shows actual loading progress with tqdm progress bars
-
-Example performance gains:
-- Original sequential loader: ~10 minutes for a typical directory
-- Optimized parallel loader: Under 2 seconds for the same directory (up to 300x faster)
+- **Parallel Processing**: Uses ThreadPoolExecutor.
+- **Asynchronous I/O**: Uses asyncio and aiohttp.
+- **Batch Processing**: Configurable batch sizes.
+- **Smart Header Checking**: Verifies availability quickly.
+- **Real-time Progress Tracking**: Uses tqdm via `run_with_progress.sh`.
 
 ## Configuration
 
-### Environment Variables
+### Environment Variables (`.env`)
 
-The application uses the following environment variables (defined in `.env`):
+- `IMAGE_SERVER_PORT`: Port for the server (default: 7779).
+- `IMAGE_SERVER_HOST`: Host to bind (default: 0.0.0.0).
+- `IMAGE_SERVER_TIMEOUT`: Auto-unload timeout in minutes (default: 30, 0 = disabled).
+- `FRAME_BASE_DIR`: Base directory for resolving relative paths provided to the API.
 
-- `FILE_SERVER_PORT`: The port to run the file server on (default: 7779)
-- `FILE_SERVER_HOST`: The host to bind the server to (default: 0.0.0.0)
-- `FILE_SERVER_TIMEOUT`: Auto-unload timeout in minutes (default: 30, 0 = disabled)
-- `FILE_BASE_DIR`: Base directory for resolving relative paths
+### Command-Line Arguments (`run_with_progress.sh`)
 
-### Command-Line Arguments
-
-The `run_with_progress.sh` script accepts the following arguments:
+Loads images and outputs a JSON file with URLs. Primarily for manual loading or testing.
 
 ```bash
 ./run_with_progress.sh <directory_path> [options]
-# or
-./run_with_progress.sh --dir=<directory_path> [options]
 ```
-
-Additional options:
-- `--server`: Custom server URL (default: http://localhost:7779)
-- `--output`: Directory to save JSON output (default: ~/Documents/LightweightFileServer/output/json)
-- `--unload`: Unload directory when done
-- `--unload-first`: Unload any previous directories before loading new ones
-- `--timeout`: Set timeout in minutes (0 to disable)
-- `--name`: Custom name for the output JSON file
-- `--workers`: Number of concurrent workers (default: 10)
-- `--batch-size`: Batch size for file uploads (default: 20)
+Options include `--server`, `--output`, `--unload`, `--timeout`, `--name`, `--workers`, `--batch-size`.
 
 ## Scripts
 
-The following scripts are provided:
-
-- `run_with_progress.sh`: Main script for loading files with real-time progress tracking
-- `load_folder_v2.py`: Optimized Python script with parallel/async file loading
-- `persistent_run.sh`: Runs the file server in persistent mode
-- `unload_directory.sh`: Unloads the current directory from the server
+- `persistent_run.sh`: Runs the Flask server persistently using `nohup`.
+- `run_with_progress.sh`: Loads images via the API, showing progress.
+- `load_folder_v2.py`: The core Python script performing the optimized loading (used by `run_with_progress.sh`).
+- `setup_ngrok.sh` & `simple_ngrok_for_n8n.sh`: Scripts for Ngrok integration.
+- `unload_directory.sh`: Simple script to call the `/unload` API endpoint.
 
 ## API Endpoints
 
-The server provides the following endpoints:
+- `POST /load-directory`: Load images from a specified directory.
+  - Body: `{"directory": "/path/or/relative/path"}`
+- `GET /images/{image_name}`: Serve a specific image from the currently loaded directory.
+- `POST /unload`: Unload the current directory.
+- `GET /`: Get status and info about the loaded directory.
+- `GET /timeout`, `POST /timeout/{minutes}`: Manage auto-unload timer.
 
-- `GET /`: Get information about the currently loaded directory
-- `POST /load-directory`: Load a directory of files
-- `GET /files/{file_name}`: Get a specific file
-- `POST /unload`: Unload the current directory
-- `GET /timeout`: Get current timeout settings
-- `POST /timeout/{minutes}`: Set a new timeout value
+## Output (`run_with_progress.sh`)
 
-## Output
-
-When loading files, a JSON file is generated in the output directory with:
-- URLs for all files
-- Server information
-- Timeout settings
-- Directory information
-
-Example:
-```json
-{
-  "success": true,
-  "directory": "/path/to/your/files",
-  "timestamp": "2023-11-15 14:30:00",
-  "message": "Generated URLs for 150 files",
-  "count": 150,
-  "file_urls": [
-    "http://localhost:7779/files/file1.txt",
-    "http://localhost:7779/files/file2.pdf",
-    ...
-  ],
-  "timeout_minutes": 30,
-  "auto_unload_at": "2023-11-15 15:00:00",
-  "time_remaining": "29m 45s"
-}
-```
+Generates a JSON file in the `output/json` directory containing image URLs and server details.
 
 ## Requirements
 
 - Python 3.7+
-- Dependencies (installed automatically):
-  - tqdm
-  - aiohttp
-  - aiofiles
-  - python-dotenv
-  - PIL (optional, for image dimensions)
+- `pip install -r requirements.txt` (Flask, requests, tqdm, aiohttp, aiofiles, python-dotenv)
 
 ## License
 
-MIT
+MIT 
