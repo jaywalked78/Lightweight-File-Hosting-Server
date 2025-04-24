@@ -1,12 +1,10 @@
-# TinyImageHoster
+# Lightweight-File-Hosting-Server
 
-A high-performance, lightweight image server for hosting local images with HTTP URLs. Perfect for machine learning workflows that require image URLs like multimodal AI models.
-
-Don't let the "Tiny" in the name fool you! While the server maintains a small footprint, it has been significantly optimized for stability and performance. It's capable of efficiently loading and serving a large number of images, making it ideal for demanding workflows. Integration with tools like Ngrok allows for easy generation of stable public URLs for these images, perfect for external services or collaboration. Although primarily tested with images, its architecture may also support serving other file types (further testing required).
+A high-performance, lightweight server for hosting local files with HTTP URLs. Built with Python, this tool makes file sharing simple with fast uploads, easy access, and minimal configuration.
 
 ## Features
 
-- Serve images from any local directory with blazing-fast loading
+- Serve files from any local directory with blazing-fast loading
 - Parallel processing with ThreadPoolExecutor and async I/O
 - Batch processing to optimize performance
 - Interactive progress bars for real-time loading feedback
@@ -20,8 +18,8 @@ Don't let the "Tiny" in the name fool you! While the server maintains a small fo
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/TinyImageHoster.git
-cd TinyImageHoster
+git clone https://github.com/jaywalked78/Lightweight-File-Hosting-Server.git
+cd Lightweight-File-Hosting-Server
 ```
 
 2. Create a virtual environment:
@@ -35,14 +33,14 @@ cp .env.example .env
 # Edit .env to set your preferences and paths
 ```
 
-4. Load images from a directory:
+4. Load files from a directory:
 ```bash
-./run_with_progress.sh /path/to/your/images
+./run_with_progress.sh /path/to/your/files
 ```
 
-5. Use the image URLs in your application:
+5. Use the file URLs in your application:
 ```
-http://localhost:7779/images/<image_name>
+http://localhost:7779/files/<file_name>
 ```
 
 6. When finished, unload the directory:
@@ -52,12 +50,12 @@ http://localhost:7779/images/<image_name>
 
 ## Performance
 
-The optimized image loader (`load_folder_v2.py`) offers significant performance improvements:
+The optimized file loader (`load_folder_v2.py`) offers significant performance improvements:
 
-- **Parallel Processing**: Uses ThreadPoolExecutor to load multiple images concurrently
+- **Parallel Processing**: Uses ThreadPoolExecutor to load multiple files concurrently
 - **Asynchronous I/O**: Implements async processing with asyncio and aiohttp
-- **Batch Processing**: Processes images in configurable batches for better throughput
-- **Smart Header Checking**: Verifies image availability without downloading full content
+- **Batch Processing**: Processes files in configurable batches for better throughput
+- **Smart Header Checking**: Verifies file availability without downloading full content
 - **Real-time Progress Tracking**: Shows actual loading progress with tqdm progress bars
 
 Example performance gains:
@@ -70,10 +68,10 @@ Example performance gains:
 
 The application uses the following environment variables (defined in `.env`):
 
-- `IMAGE_SERVER_PORT`: The port to run the image server on (default: 7779)
-- `IMAGE_SERVER_HOST`: The host to bind the server to (default: 0.0.0.0)
-- `IMAGE_SERVER_TIMEOUT`: Auto-unload timeout in minutes (default: 30, 0 = disabled)
-- `FRAME_BASE_DIR`: Base directory for resolving relative paths
+- `FILE_SERVER_PORT`: The port to run the file server on (default: 7779)
+- `FILE_SERVER_HOST`: The host to bind the server to (default: 0.0.0.0)
+- `FILE_SERVER_TIMEOUT`: Auto-unload timeout in minutes (default: 30, 0 = disabled)
+- `FILE_BASE_DIR`: Base directory for resolving relative paths
 
 ### Command-Line Arguments
 
@@ -87,21 +85,21 @@ The `run_with_progress.sh` script accepts the following arguments:
 
 Additional options:
 - `--server`: Custom server URL (default: http://localhost:7779)
-- `--output`: Directory to save JSON output (default: ~/Documents/LightweightImageServer/output/json)
+- `--output`: Directory to save JSON output (default: ~/Documents/LightweightFileServer/output/json)
 - `--unload`: Unload directory when done
 - `--unload-first`: Unload any previous directories before loading new ones
 - `--timeout`: Set timeout in minutes (0 to disable)
 - `--name`: Custom name for the output JSON file
 - `--workers`: Number of concurrent workers (default: 10)
-- `--batch-size`: Batch size for image uploads (default: 20)
+- `--batch-size`: Batch size for file uploads (default: 20)
 
 ## Scripts
 
 The following scripts are provided:
 
-- `run_with_progress.sh`: Main script for loading images with real-time progress tracking
-- `load_folder_v2.py`: Optimized Python script with parallel/async image loading
-- `persistent_run.sh`: Runs the image server in persistent mode
+- `run_with_progress.sh`: Main script for loading files with real-time progress tracking
+- `load_folder_v2.py`: Optimized Python script with parallel/async file loading
+- `persistent_run.sh`: Runs the file server in persistent mode
 - `unload_directory.sh`: Unloads the current directory from the server
 
 ## API Endpoints
@@ -109,16 +107,16 @@ The following scripts are provided:
 The server provides the following endpoints:
 
 - `GET /`: Get information about the currently loaded directory
-- `POST /load-directory`: Load a directory of images
-- `GET /images/{image_name}`: Get a specific image
+- `POST /load-directory`: Load a directory of files
+- `GET /files/{file_name}`: Get a specific file
 - `POST /unload`: Unload the current directory
 - `GET /timeout`: Get current timeout settings
 - `POST /timeout/{minutes}`: Set a new timeout value
 
 ## Output
 
-When loading images, a JSON file is generated in the output directory with:
-- URLs for all images
+When loading files, a JSON file is generated in the output directory with:
+- URLs for all files
 - Server information
 - Timeout settings
 - Directory information
@@ -127,13 +125,13 @@ Example:
 ```json
 {
   "success": true,
-  "directory": "/path/to/your/images",
+  "directory": "/path/to/your/files",
   "timestamp": "2023-11-15 14:30:00",
-  "message": "Generated URLs for 150 images",
+  "message": "Generated URLs for 150 files",
   "count": 150,
-  "image_urls": [
-    "http://localhost:7779/images/image1.jpg",
-    "http://localhost:7779/images/image2.jpg",
+  "file_urls": [
+    "http://localhost:7779/files/file1.txt",
+    "http://localhost:7779/files/file2.pdf",
     ...
   ],
   "timeout_minutes": 30,
@@ -154,4 +152,4 @@ Example:
 
 ## License
 
-MIT 
+MIT
