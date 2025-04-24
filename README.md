@@ -11,7 +11,7 @@ This Image Server is often used within a larger content ingestion pipeline, prov
 ```mermaid
 flowchart TD
     A[Video Input] --> B(n8n: Trigger Frame Processor);
-    B --> C{[Frame Processor Extractor]};
+    B --> C[Frame Processor Extractor];
     C --> D(n8n: AI Enrichment + OCR Refinement + Airtable Upsert);
     D --> E(n8n: Trigger IntelliChunk);
     E --> F{IntelliChunk + LIGHTWEIGHT IMAGE SERVER};
